@@ -35,24 +35,57 @@ export default class Register extends Component {
 
   render() {
     return (
-        <View>
-            <Text>Crea tu usuario: </Text>
+        <View style = {styles.container}>
+            <Text style = {styles.title} >Crea tu usuario: </Text>
             <TextInput 
                 keyboardType='default' 
                 onChangeText={(text) => this.setState({email: text})}
                 value={this.state.email}
+                style = {styles.input}
                 />
             <TextInput 
-                keyboardType='numeric'
+                keyboardType='default'
                 onChangeText={(text) => this.setState({password: text})}
                 value={this.state.password}
                 secureTextEntry= {true}
+                style = {styles.input}
                 />
             <Pressable
-            onPress={() => this.submit(this.state.username, this.state.email, this.state.password)}>
-            <Text> Enviar registro</Text>
+            onPress={() => this.submit(this.state.email, this.state.password)}
+            style = {styles.button}
+            >
+            <Text style = {styles.textoBoton} > Enviar registro</Text>
             </Pressable>
         </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    width: '20%',
+    marginBottom: 15,
+    padding: 10,
+    borderRadius: 5
+  },
+  button: {
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 5
+  },
+  textoBoton: {
+    color: 'white'
+  }
+});
