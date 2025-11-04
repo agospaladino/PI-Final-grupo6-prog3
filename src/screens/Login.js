@@ -48,19 +48,19 @@ export default class Login extends Component {
                     onChangeText={(text) => this.setState({ password: text })}
                     value={this.state.password}
                 />
-        <Pressable style={styles.button}
-          onPress={() =>
-            this.props.navigation.navigate("Register")
-          }>
-          <Text style={styles.buttontext}>Ir al Registro</Text>
-        </Pressable>
-
-         <Pressable
+        <Pressable
         style={styles.button}
         onPress={() => this.submit(this.state.email, this.state.password)}>
-        <Text style={styles.buttontext}>Enviar login</Text>
+        <Text style={styles.buttontext}>Iniciar sesión</Text>
       </Pressable>
 
+        <Pressable onPress={() =>
+            this.props.navigation.navigate("Register")
+          }>
+          <Text style={styles.textlink}>No tengo cuenta</Text>
+        </Pressable>
+
+         
       </View>
     )
   }
@@ -68,24 +68,24 @@ export default class Login extends Component {
 
 
 const styles = StyleSheet.create({
-  container: {
+   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '400', 
-    marginBottom: 25,
+    fontSize: 20,
+    fontWeight: '400',
+    marginBottom: 30,
     textAlign: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '25%', 
-    height: 40,   
+    width: '80%',        
+    height: 40,
     marginBottom: 15,
     paddingHorizontal: 10,
     borderRadius: 6,
@@ -93,18 +93,23 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#000',
-    width: '20%',  
+    width: '80%',     
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 6,
     marginTop: 8,
-    color: "white"
   },
   buttontext: {
     color: '#fff',
     fontSize: 15,
-    fontWeight: '400', 
+    fontWeight: '400',
   },
+  textlink: {
+    fontWeight: '450',
+    color: '#000',
+    fontSize: 15,
+    marginTop: 10,
+  }
 });
 
