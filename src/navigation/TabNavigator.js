@@ -7,6 +7,7 @@ export default class TabNavigator extends Component {
   render() {
     return (
       <Tab.Navigator>
+         <Tab.Screen name="Home" component={Home} options={ { headerShown: false}} />
       </Tab.Navigator>
     )
   }
