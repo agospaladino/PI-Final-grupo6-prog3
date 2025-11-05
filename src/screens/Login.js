@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '80%',        
+    width: '20%',        
     height: 40,
     marginBottom: 15,
     paddingHorizontal: 10,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#000',
-    width: '80%',     
+    width: '20%',     
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
