@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { auth } from '../firebase/config';
 
 import Login from '../screens/Login';
@@ -35,7 +35,6 @@ export default class StackNavigator extends Component {
     if (loading) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000" />
           <Text>Cargando...</Text>
         </View>
       );
