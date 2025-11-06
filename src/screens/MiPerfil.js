@@ -40,12 +40,12 @@ export default class MiPerfil extends Component {
           if (docs.empty === false) {
             const userData = docs.docs[0].data();
             this.setState({ 
-              username: userData.username || user.email.split('@')[0]
+              username: userData.username || user.email
             });
           } else {
             // Si no hay datos, usar email como username
             this.setState({ 
-              username: user.email.split('@')[0]
+              username: user.email
             });
           }
           this.setState({ loading: false });
@@ -53,7 +53,7 @@ export default class MiPerfil extends Component {
         .catch((error) => {
           console.log('Error:', error);
           this.setState({ 
-            username: user.email.split('@')[0],
+            username: user.email,
             loading: false 
           });
         });
