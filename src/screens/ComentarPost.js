@@ -1,4 +1,4 @@
-import { Text, View, TextInput, Pressable } from 'react-native'
+import { Text, View, TextInput, Pressable, StyleSheet } from 'react-native'
 import React, { Component } from 'react'
 import { db, auth } from '../firebase/config'
 
@@ -60,28 +60,28 @@ export default class ComentarPost extends Component {
     const { post, comentarios, comentario, loading } = this.state;
 
     return (
-      <View>
-        <View>
-          <Text>
+      <View style={styles.pantalla} >
+        <View style={styles.card}>
+          <Text style={styles.postOwner}>
             {post.owner || 'Usuario'} posteó
           </Text>
-          <Text>{post.post || 'Sin contenido'}</Text>
+          <Text style={styles.postTexto}>{post.post || 'Sin contenido'}</Text>
         </View>
 
-        <View>
-          <Text>Comentarios</Text>
+        <View style={styles.comentariosContainer}>
+          <Text style={styles.comentariosTitulo}>Comentarios</Text>
           
           {loading ? (
-            <Text>Cargando comentarios...</Text>
+            <Text style={styles.cargando}>Cargando comentarios...</Text>
           ) : comentarios.length === 0 ? (
-            <Text>No hay comentarios todavía</Text>
+            <Text style={styles.cargando}>No hay comentarios todavía</Text>
           ) : (
             <View>
               {comentarios.map((comentario) => {
                 return (
-                  <View key={comentario.id}>
-                    <Text>{comentario.owner || 'Usuario'}</Text>
-                    <Text>{comentario.texto}</Text>
+                  <View key={comentario.id}  style={styles.comentarioItem}>
+                    <Text style={styles.comentarioOwner}>{comentario.owner || 'Usuario'}</Text>
+                    <Text style={styles.comentarioTexto}>{comentario.texto}</Text>
                   </View>
                 );
               })}
@@ -89,17 +89,19 @@ export default class ComentarPost extends Component {
           )}
         </View>
 
-        <View>
+        <View style={styles.formComentario}>
           <TextInput
+            style={styles.inputComentario}
             placeholder="Comenta aquí tu post..."
             onChangeText={(text) => this.setState({ comentario: text })}
             value={comentario}
             multiline
           />
           <Pressable
+            style={styles.boton}
             onPress={() => this.publicarComentario()}
           >
-            <Text>Publicar comentario</Text>
+            <Text style={styles.botonTexto}>Publicar comentario</Text>
           </Pressable>
         </View>
       </View>
@@ -107,3 +109,89 @@ export default class ComentarPost extends Component {
   }
 }
 
+const styles= StyleSheet.create({
+  pantalla:{
+    flex: 1,
+    backgroundColor: '#f4f4f4',   
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    padding: 24,
+    borderRadius: 10,
+    width: '80%',
+    maxWidth: 500
+  },
+  postOwner: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  postTexto: {
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  comentariosContainer: {
+    width: '80%',
+    maxWidth: 500,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  comentariosTitulo: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  cargando: {
+    fontSize: 14,
+    color: '#666',
+  },
+  comentarioItem: {
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  comentarioOwner: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  comentarioTexto: {
+    fontSize: 14,
+  },
+  formComentario: {
+    width: '80%',
+    maxWidth: 500,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+  },
+  inputComentario: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    minHeight: 70,
+    textAlignVertical: 'top',
+    marginBottom: 10,
+  },
+  boton: {
+    backgroundColor: '#007AFF',   
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  botonTexto: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '500',
+  }
+
+
+
+});

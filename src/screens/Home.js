@@ -10,5 +10,10 @@ export default class Home extends Component {
       loading: true
     };
   }
+  render(){
+    return(
+      <Text>Estas en el home</Text>
+    )
 
+  }
 }

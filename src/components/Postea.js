@@ -6,20 +6,50 @@ export default class Postea extends Component {
     constructor(props){
         super(props)
         this.state = {
-            post: ''
+            post: '',
+            usuarioLogueado: null
         }
+    }
+    componentDidMount(){
+        auth.onAuthStateChanged(
+            user =>{
+                if(user){
+                    this.setState({ usuarioLogueado: user })
+                } else {
+                    this.setState({usuarioLogueado: null})
+                }
+            }
+        )
     }
     postear(texto){
         if(texto !==''){
-        db.collection('posts').add({
+        if(auth.currentUser){
+            db.collection('posts').add({
             owner: auth.currentUser.email,
             createdAt: Date.now(),
             post: texto})
-        .then((resp) => this.props.navigation.navigate('Home'))
-        .catch((err) => console.log(err))
+            .then((resp) => this.props.navigation.navigate('Home'))
+            .catch((err) => console.log(err))
+        } else{
+            alert("Logueate para postear")
+        }
     }}
 
   render() {
+    if(this.state.usuarioLogueado === null){
+        return(
+            <View style={styles.contenedor}>
+                <Text style={styles.titulo}>
+                    Tenés que iniciar sesión para hacer un posteo.
+                </Text>
+                <Pressable
+                    style={styles.boton}
+                    onPress={() => this.props.navigation.navigate('Login')}>
+                    <Text style={styles.botonTexto}>Ir a iniciar sesión</Text>
+                </Pressable>
+            </View>
+        )
+    }
     return (
         <View style={styles.contenedor}>
             <Text style={styles.titulo}>Hace tu posteo:</Text>
