@@ -11,7 +11,8 @@ export default class ComentarPost extends Component {
       post: post,
       comentario: '',
       comentarios: [],
-      loading: true
+      loading: true,
+      error: ''
     };
   }
 
@@ -51,33 +52,36 @@ export default class ComentarPost extends Component {
         })
         .catch((error) => {
           console.log('Error al publicar comentario:', error);
-          alert('Error al publicar comentario');
+          this.setState({ error: 'Error al publicar comentario' });
         });
       }
     }
   }
 
   render() {
-    const { post, comentarios, comentario, loading } = this.state;
-
     return (
       <View style={styles.container}>
+        {this.state.error.length > 0 ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{this.state.error}</Text>
+          </View>
+        ) : null}
         <View style={styles.contentSection}>
           <View style={styles.postContainer}>
-            <Text style={styles.ownerText}>{post.owner || 'Usuario'} posteó:</Text>
-            <Text style={styles.postText}>{post.post || 'Sin contenido'}</Text>
+            <Text style={styles.ownerText}>{this.state.post.owner || 'Usuario'} posteó:</Text>
+            <Text style={styles.postText}>{this.state.post.post || 'Sin contenido'}</Text>
           </View>
 
           <View style={styles.comentariosSection}>
             <Text style={styles.tituloComentarios}>Comentarios</Text>
             
-            {loading ? (
+            {this.state.loading ? (
               <Text style={styles.loadingText}>Cargando comentarios...</Text>
-            ) : comentarios.length === 0 ? (
+            ) : this.state.comentarios.length === 0 ? (
               <Text style={styles.noComentariosText}>No hay comentarios todavía</Text>
             ) : (
               <View>
-                {comentarios.map((comentario) => {
+                {this.state.comentarios.map((comentario) => {
                   return (
                     <View key={comentario.id} style={styles.comentarioCard}>
                       <Text style={styles.comentarioOwner}>{comentario.owner || 'Usuario'}</Text>
@@ -94,8 +98,8 @@ export default class ComentarPost extends Component {
           <TextInput
             style={styles.input}
             placeholder="Comenta aquí tu post..."
-            onChangeText={(text) => this.setState({ comentario: text })}
-            value={comentario}
+            onChangeText={(text) => this.setState({ comentario: text, error: '' })}
+            value={this.state.comentario}
           />
           <Pressable
             style={styles.button}
@@ -200,6 +204,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '500'
+  },
+  errorContainer: {
+    backgroundColor: '#ff4444',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 12
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center'
   }
 });
 

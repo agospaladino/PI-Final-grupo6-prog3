@@ -8,7 +8,8 @@ export default class Postea extends Component {
         this.state = {
             post: '',
             usuarioLogueado: null,
-            publicando: false
+            publicando: false,
+            error: ''
         }
     }
     componentDidMount(){
@@ -40,11 +41,10 @@ export default class Postea extends Component {
                 })
                 .catch((err) => {
                     console.log(err);
-                    this.setState({ publicando: false });
-                    alert('Error al publicar el posteo');
+                    this.setState({ publicando: false, error: 'Error al publicar el posteo' });
                 })
             } else {
-                alert("Logueate para postear")
+                this.setState({ error: 'Logueate para postear' });
             }
         }
     }
@@ -67,11 +67,16 @@ export default class Postea extends Component {
     return (
         <View style={styles.contenedor}>
             <Text style={styles.titulo}>Hace tu posteo:</Text>
+            {this.state.error.length > 0 ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{this.state.error}</Text>
+              </View>
+            ) : null}
             <View>
             <TextInput
                 style={styles.cajaTexto}
                 keyboardType="default"
-                onChangeText={(post) => this.setState({post: post})}
+                onChangeText={(post) => this.setState({post: post, error: ''})}
                 value = {this.state.post}
             /> 
             <Pressable
@@ -138,6 +143,18 @@ const styles = StyleSheet.create(
     botonTexto: {
         color: "#fff",
         fontSize: 16
+    },
+    errorContainer: {
+        backgroundColor: '#ff4444',
+        padding: 12,
+        borderRadius: 6,
+        marginBottom: 12,
+        width: '100%'
+    },
+    errorText: {
+        color: '#fff',
+        fontSize: 14,
+        textAlign: 'center'
     }
     }
 )

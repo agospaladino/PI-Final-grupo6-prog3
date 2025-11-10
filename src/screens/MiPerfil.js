@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Pressable, StyleSheet, FlatList } from 'react-native';
 import { db, auth } from '../firebase/config';
+import PostCard from '../components/PostCard';
 
 export default class MiPerfil extends Component {
   constructor(props) {
@@ -9,19 +10,17 @@ export default class MiPerfil extends Component {
       userEmail: '',
       username: '',
       posts: [],
-      loading: true
+      loading: true,
+      error: ''
     };
   }
 
   componentDidMount() {
-    // Escuchar cambios en el estado de autenticación
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // Usuario autenticado, cargar datos
         this.getUserData();
         this.getUserPosts();
       } else {
-        // Usuario no autenticado, redirigir a Login
         this.props.navigation.navigate('Login');
       }
     });
@@ -68,8 +67,7 @@ export default class MiPerfil extends Component {
     if (user) {
       db.collection('posts')
         .where('owner', '==', user.email)
-        .get()
-        .then((docs) => {
+        .onSnapshot((docs) => {
           const posts = [];
           docs.docs.forEach((doc) => {
             posts.push({
@@ -79,10 +77,6 @@ export default class MiPerfil extends Component {
             });
           });
           this.setState({ posts });
-        })
-        .catch((error) => {
-          console.log('Error al obtener posts:', error);
-          this.setState({ posts: [] });
         });
     }
   }
@@ -90,30 +84,16 @@ export default class MiPerfil extends Component {
   logout() {
     auth.signOut()
       .then(() => {
-        alert('Sesión cerrada correctamente');
         this.props.navigation.navigate('Login');
       })
       .catch((error) => {
         console.log('Error al cerrar sesión:', error);
-        alert('Error al cerrar sesión');
+        this.setState({ error: 'Error al cerrar sesión' });
       });
   }
 
-  renderPost = ({ item }) => {
-    return (
-      <View style={styles.postCard}>
-        <Text style={styles.postUser}>
-          {this.state.username} posteó
-        </Text>
-        <Text style={styles.postText}>{item.text || 'Sin contenido'}</Text>
-      </View>
-    );
-  }
-
   render() {
-    const { userEmail, username, posts, loading } = this.state;
-
-    if (loading) {
+    if (this.state.loading) {
       return (
         <View style={styles.container}>
           <Text>Cargando...</Text>
@@ -123,29 +103,41 @@ export default class MiPerfil extends Component {
 
     return (
       <View style={styles.container}>
+        {this.state.error.length > 0 ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{this.state.error}</Text>
+          </View>
+        ) : null}
         <View style={styles.profileSection}>
           <Text style={styles.sectionTitle}>Mi Perfil</Text>
           
           <View style={styles.userInfo}>
             <Text style={styles.label}>Nombre de usuario:</Text>
-            <Text style={styles.value}>{username}</Text>
+            <Text style={styles.value}>{this.state.username}</Text>
           </View>
 
           <View style={styles.userInfo}>
             <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{userEmail}</Text>
+            <Text style={styles.value}>{this.state.userEmail}</Text>
           </View>
         </View>
 
         <View style={styles.postsSection}>
           <Text style={styles.sectionTitle}>Últimos posteos</Text>
           
-          {posts.length === 0 ? (
+          {this.state.posts.length === 0 ? (
             <Text style={styles.noPosts}>No hay posteos todavía</Text>
           ) : (
             <FlatList
-              data={posts}
-              renderItem={this.renderPost}
+              data={this.state.posts}
+              renderItem={({ item }) => (
+                <PostCard
+                  post={item.text}
+                  owner={this.state.username + ' posteó'}
+                  showLikes={false}
+                  showCommentButton={false}
+                />
+              )}
               keyExtractor={(item) => item.id}
             />
           )}
@@ -209,24 +201,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  postCard: {
-    backgroundColor: '#f9f9f9',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderLeftWidth: 3,
-    borderLeftColor: '#007AFF',
-  },
-  postUser: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 8,
-  },
-  postText: {
-    fontSize: 14,
-    color: '#000',
-    lineHeight: 20,
-  },
   noPosts: {
     fontSize: 14,
     color: '#999',
@@ -245,4 +219,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  errorContainer: {
+    backgroundColor: '#ff4444',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 12
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center'
+  }
 });

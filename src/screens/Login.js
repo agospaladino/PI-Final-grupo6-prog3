@@ -8,44 +8,47 @@ export default class Login extends Component {
     this.state={
       email: '',
       password: '',
+      error: ''
     }
   }
 
   submit(email, password) {
-
     console.log('Usuario Logeado:', { email, password });
     if(password.length < 5){
-        alert('La contraseña debe tener al menos 5 caracteres');
+        this.setState({ error: 'La contraseña debe tener al menos 5 caracteres' });
         return;
     }    
-     auth.signInWithEmailAndPassword(email, password)
+    auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      
-      alert('Inicio de sesión exitoso');
+      this.setState({ error: '' });
       this.props.navigation.navigate('TabNavigator', { screen: 'Home' });
     })
     .catch((error) => {
-      
-     console.log('Error en el inicio de sesión:', error);
-      alert('Credenciales incorrectas');
+      console.log('Error en el inicio de sesión:', error);
+      this.setState({ error: 'Credenciales incorrectas' });
     });
 }
   render() {
     return (
         <View style={styles.container}>
-        <Text style = {styles.title}>Iniciá sesión</Text>
+        <Text style={styles.title}>Iniciá sesión</Text>
+        {this.state.error.length > 0 ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{this.state.error}</Text>
+          </View>
+        ) : null}
          <TextInput 
                 style={styles.input}
                     keyboardType='email-address'
                     placeholder='Email'
-                    onChangeText={(text) => this.setState({ email: text })}
+                    onChangeText={(text) => this.setState({ email: text, error: '' })}
                     value={this.state.email}
                 />
                  <TextInput 
                    style={styles.input}
                    placeholder="Contraseña"
                     secureTextEntry={true}
-                    onChangeText={(text) => this.setState({ password: text })}
+                    onChangeText={(text) => this.setState({ password: text, error: '' })}
                     value={this.state.password}
                 />
         <Pressable
@@ -114,6 +117,20 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 15,
     marginTop: 10,
+  },
+  errorContainer: {
+    backgroundColor: '#ff4444',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 12,
+    width: '100%',
+    maxWidth: 420,
+    minWidth: 260
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center'
   }
 });
 

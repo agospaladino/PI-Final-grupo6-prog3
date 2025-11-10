@@ -6,6 +6,7 @@ import { auth } from '../firebase/config';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
 import TabNavigator from './TabNavigator';
+import ComentarPost from '../screens/ComentarPost';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,6 @@ export default class StackNavigator extends Component {
   }
 
   componentDidMount() {
-    // Verificar si el usuario ya está logueado
     auth.onAuthStateChanged((user) => {
       this.setState({
         loading: false,
@@ -29,10 +29,7 @@ export default class StackNavigator extends Component {
   }
 
   render() {
-    const { loading, user } = this.state;
-
-    // Mostrar pantalla de carga mientras se verifica el estado de autenticación
-    if (loading) {
+    if (this.state.loading) {
       return (
         <View style={styles.loadingContainer}>
           <Text>Cargando...</Text>
@@ -42,21 +39,10 @@ export default class StackNavigator extends Component {
 
     return (
       <Stack.Navigator>
-        {user ? (
-          // Si hay usuario logueado, mostrar TabNavigator como pantalla inicial
-          <>
-            <Stack.Screen name='TabNavigator' component={TabNavigator} options={{headerShown: false}}/>
-            <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>            
-            <Stack.Screen name='Register' component={Register} options={{headerShown: false}}/>
-          </>
-        ) : (
-          // Si no hay usuario, mostrar Login como pantalla inicial
-          <>
-            <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>            
-            <Stack.Screen name='Register' component={Register} options={{headerShown: false}}/>
-            <Stack.Screen name='TabNavigator' component={TabNavigator} options={{headerShown: false}}/>
-          </>
-        )}
+        <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
+        <Stack.Screen name='Register' component={Register} options={{headerShown: false}}/>
+        <Stack.Screen name='TabNavigator' component={TabNavigator} options={{headerShown: false}}/>
+        <Stack.Screen name='ComentarPost' component={ComentarPost} options={{headerShown: false}}/>
       </Stack.Navigator>
     );
   }
