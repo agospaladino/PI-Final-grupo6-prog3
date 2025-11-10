@@ -22,17 +22,30 @@ export default class Register extends Component {
     ) {
       auth.createUserWithEmailAndPassword(email, password)
       .then((user) => {
-        db.collection('users').add({
-                    nombre: nombre,
-                    owner: email,
-                    createdAt: Date.now()
-                    })
-        
-    })
-      .then(
-        this.props.navigation.navigate('Login')
-      )
-      .catch(() => console.log('Algo se rompio'))
+        return db.collection('users').add({
+          username: nombre,
+          owner: email,
+          createdAt: Date.now()
+        })
+      })
+      .then(() => {
+        console.log('Usuario guardado correctamente');
+        this.props.navigation.navigate('Login');
+      })
+      .catch((error) => {
+        console.log('Error al registrar:', error);
+        let mensajeError = 'Error al registrar usuario';
+        if (error.code === 'auth/email-already-in-use') {
+          mensajeError = 'El email ya está en uso';
+        } else if (error.code === 'auth/invalid-email') {
+          mensajeError = 'El email no es válido';
+        } else if (error.code === 'auth/weak-password') {
+          mensajeError = 'La contraseña es muy débil';
+        } else if (error.message) {
+          mensajeError = error.message;
+        }
+        alert(mensajeError);
+      })
   }
 }
 
@@ -49,7 +62,7 @@ export default class Register extends Component {
                 />
             <Text>Email: </Text>
             <TextInput 
-                keyboardType='default' 
+                keyboardType='email-address'
                 onChangeText={(text) => this.setState({email: text})}
                 value={this.state.email}
                 style = {styles.input}
@@ -67,6 +80,10 @@ export default class Register extends Component {
             style = {styles.button}
             >
             <Text style = {styles.textoBoton} > Enviar registro</Text>
+            </Pressable>
+
+            <Pressable onPress={() => this.props.navigation.navigate('Login')}>
+              <Text style={styles.textlink}>Ya tengo cuenta</Text>
             </Pressable>
         </View>
     )
@@ -99,5 +116,11 @@ const styles = StyleSheet.create({
   },
   textoBoton: {
     color: 'white'
+  },
+  textlink: {
+    fontWeight: '450',
+    color: '#000',
+    fontSize: 15,
+    marginTop: 10
   }
 });

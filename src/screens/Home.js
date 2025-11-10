@@ -87,11 +87,11 @@ const styles = StyleSheet.create({
   },
   postCard: {
     marginBottom: 12,
-     padding: 12, 
-     borderWidth: 1, 
-     borderColor: 'lightgray', 
-     borderRadius: 8, 
-     backgroundColor: '#fff'
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    borderRadius: 8,
+    backgroundColor: '#fff'
   },
   postText: { 
     fontSize: 16, 
@@ -115,11 +115,11 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginTop: 5
   },
-  commentButtonText: { 
-    color: '#fff', 
+  commentButtonText: {
+    color: '#fff',
     fontSize: 14,
-     fontWeight: '500' 
-    },
+    fontWeight: '500'
+  },
   noPosts: { 
     fontSize: 14, 
     color: '#999', 

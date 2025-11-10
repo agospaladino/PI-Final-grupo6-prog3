@@ -39,11 +39,14 @@ export default class MiPerfil extends Component {
         .then((docs) => {
           if (docs.empty === false) {
             const userData = docs.docs[0].data();
+            console.log('Datos del usuario encontrados:', userData);
+            const nombreUsuario = userData.username || userData.nombre || user.email;
             this.setState({ 
-              username: userData.username || user.email
+              username: nombreUsuario
             });
           } else {
             // Si no hay datos, usar email como username
+            console.log('No se encontraron datos del usuario');
             this.setState({ 
               username: user.email
             });
@@ -71,8 +74,8 @@ export default class MiPerfil extends Component {
           docs.docs.forEach((doc) => {
             posts.push({
               id: doc.id,
-              text: doc.data().text || doc.data().content || '',
-              createdAt: doc.data().createdAt
+              text: doc.data().post || doc.data().text || doc.data().content || '',
+              createdAt: doc.data().createdAt || 0
             });
           });
           this.setState({ posts });

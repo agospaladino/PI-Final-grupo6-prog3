@@ -7,7 +7,8 @@ export default class Postea extends Component {
         super(props)
         this.state = {
             post: '',
-            usuarioLogueado: null
+            usuarioLogueado: null,
+            publicando: false
         }
     }
     componentDidMount(){
@@ -22,18 +23,31 @@ export default class Postea extends Component {
         )
     }
     postear(texto){
-        if(texto !==''){
-        if(auth.currentUser){
-            db.collection('posts').add({
-            owner: auth.currentUser.email,
-            createdAt: Date.now(),
-            post: texto})
-            .then((resp) => this.props.navigation.navigate('Home'))
-            .catch((err) => console.log(err))
-        } else{
-            alert("Logueate para postear")
+        if(this.state.publicando) {
+            return;
         }
-    }}
+        if(texto !== ''){
+            if(auth.currentUser){
+                this.setState({ publicando: true });
+                db.collection('posts').add({
+                    owner: auth.currentUser.email,
+                    createdAt: Date.now(),
+                    post: texto
+                })
+                .then((resp) => {
+                    this.setState({ post: '', publicando: false });
+                    this.props.navigation.navigate('Home');
+                })
+                .catch((err) => {
+                    console.log(err);
+                    this.setState({ publicando: false });
+                    alert('Error al publicar el posteo');
+                })
+            } else {
+                alert("Logueate para postear")
+            }
+        }
+    }
 
   render() {
     if(this.state.usuarioLogueado === null){

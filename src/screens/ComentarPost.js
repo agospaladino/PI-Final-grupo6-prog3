@@ -5,9 +5,9 @@ import { db, auth } from '../firebase/config'
 export default class ComentarPost extends Component {
   constructor(props) {
     super(props);
-    const { post } = this.props.route.params;
+    const { postId, post } = this.props.route.params;
     this.state = {
-      postId: post.id,
+      postId: postId,
       post: post,
       comentario: '',
       comentarios: [],
@@ -22,14 +22,15 @@ export default class ComentarPost extends Component {
   getComentarios() {
     db.collection('comentarios')
       .where('postId', '==', this.state.postId)
-      .orderBy('createdAt', 'desc')
       .onSnapshot((docs) => {
-        const comentarios = docs.docs.map((doc) => {
-          return {
+        const comentarios = [];
+        docs.docs.forEach((doc) => {
+          comentarios.push({
             id: doc.id,
             texto: doc.data().texto || '',
-            owner: doc.data().owner || ''
-          };
+            owner: doc.data().owner || '',
+            createdAt: doc.data().createdAt || 0
+          });
         });
         this.setState({ comentarios, loading: false });
       });
@@ -60,48 +61,47 @@ export default class ComentarPost extends Component {
     const { post, comentarios, comentario, loading } = this.state;
 
     return (
-      <View style={styles.pantalla} >
-        <View style={styles.card}>
-          <Text style={styles.postOwner}>
-            {post.owner || 'Usuario'} posteó
-          </Text>
-          <Text style={styles.postTexto}>{post.post || 'Sin contenido'}</Text>
+      <View style={styles.container}>
+        <View style={styles.contentSection}>
+          <View style={styles.postContainer}>
+            <Text style={styles.ownerText}>{post.owner || 'Usuario'} posteó:</Text>
+            <Text style={styles.postText}>{post.post || 'Sin contenido'}</Text>
+          </View>
+
+          <View style={styles.comentariosSection}>
+            <Text style={styles.tituloComentarios}>Comentarios</Text>
+            
+            {loading ? (
+              <Text style={styles.loadingText}>Cargando comentarios...</Text>
+            ) : comentarios.length === 0 ? (
+              <Text style={styles.noComentariosText}>No hay comentarios todavía</Text>
+            ) : (
+              <View>
+                {comentarios.map((comentario) => {
+                  return (
+                    <View key={comentario.id} style={styles.comentarioCard}>
+                      <Text style={styles.comentarioOwner}>{comentario.owner || 'Usuario'}</Text>
+                      <Text style={styles.comentarioTexto}>{comentario.texto}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
         </View>
 
-        <View style={styles.comentariosContainer}>
-          <Text style={styles.comentariosTitulo}>Comentarios</Text>
-          
-          {loading ? (
-            <Text style={styles.cargando}>Cargando comentarios...</Text>
-          ) : comentarios.length === 0 ? (
-            <Text style={styles.cargando}>No hay comentarios todavía</Text>
-          ) : (
-            <View>
-              {comentarios.map((comentario) => {
-                return (
-                  <View key={comentario.id}  style={styles.comentarioItem}>
-                    <Text style={styles.comentarioOwner}>{comentario.owner || 'Usuario'}</Text>
-                    <Text style={styles.comentarioTexto}>{comentario.texto}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.formComentario}>
+        <View style={styles.inputSection}>
           <TextInput
-            style={styles.inputComentario}
+            style={styles.input}
             placeholder="Comenta aquí tu post..."
             onChangeText={(text) => this.setState({ comentario: text })}
             value={comentario}
-            multiline
           />
           <Pressable
-            style={styles.boton}
+            style={styles.button}
             onPress={() => this.publicarComentario()}
           >
-            <Text style={styles.botonTexto}>Publicar comentario</Text>
+            <Text style={styles.buttonText}>Publicar comentario</Text>
           </Pressable>
         </View>
       </View>
@@ -109,89 +109,97 @@ export default class ComentarPost extends Component {
   }
 }
 
-const styles= StyleSheet.create({
-  pantalla:{
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    backgroundColor: '#f4f4f4',   
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 16
   },
-  card: {
-    backgroundColor: '#ffffff',
-    padding: 24,
-    borderRadius: 10,
-    width: '80%',
-    maxWidth: 500
+  contentSection: {
+    flex: 1
   },
-  postOwner: {
+  postContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'lightgray'
+  },
+  ownerText: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 8
+  },
+  postText: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 6,
-    textAlign: 'center',
+    color: '#000'
   },
-  postTexto: {
-    fontSize: 15,
-    textAlign: 'center',
+  comentariosSection: {
+    marginBottom: 16
   },
-  comentariosContainer: {
-    width: '80%',
-    maxWidth: 500,
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20
+  tituloComentarios: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: '#000'
   },
-  comentariosTitulo: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  cargando: {
+  loadingText: {
     fontSize: 14,
-    color: '#666',
+    color: '#999',
+    textAlign: 'center',
+    padding: 20
   },
-  comentarioItem: {
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    paddingTop: 8,
-    paddingBottom: 8,
+  noComentariosText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    padding: 20
+  },
+  comentarioCard: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'lightgray'
   },
   comentarioOwner: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 2,
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 4,
+    fontWeight: '500'
   },
   comentarioTexto: {
     fontSize: 14,
+    color: '#000'
   },
-  formComentario: {
-    width: '80%',
-    maxWidth: 500,
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 10,
+  inputSection: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'lightgray'
   },
-  inputComentario: {
+  input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
+    borderRadius: 6,
     padding: 10,
-    minHeight: 70,
-    textAlignVertical: 'top',
     marginBottom: 10,
+    fontSize: 14,
+    backgroundColor: '#fff'
   },
-  boton: {
-    backgroundColor: '#007AFF',   
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignItems: 'center',
+  button: {
+    backgroundColor: '#007AFF',
+    padding: 12,
+    borderRadius: 6,
+    alignItems: 'center'
   },
-  botonTexto: {
+  buttonText: {
     color: '#fff',
-    fontSize: 15,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '500'
   }
-
-
-
 });
+
