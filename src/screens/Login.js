@@ -8,16 +8,22 @@ export default class Login extends Component {
     this.state={
       email: '',
       password: '',
-      error: ''
+      error: ""
     }
   }
 
   submit(email, password) {
     console.log('Usuario Logeado:', { email, password });
-    if(password.length < 5){
-        this.setState({ error: 'La contraseña debe tener al menos 5 caracteres' });
-        return;
-    }    
+    const errorL = []
+    if(!email.includes('@')){
+      errorL.push("El email ingresado no es valido")
+    }
+    if (!password || password.length < 5){
+      errorL.push('La contraseña es incorrecta');
+    } 
+    if(errorL.length > 0){
+      this.setState({error: errorL})
+    }
     auth.signInWithEmailAndPassword(email, password)
     .then(() => {
       this.setState({ error: '' });
@@ -25,7 +31,6 @@ export default class Login extends Component {
     })
     .catch((error) => {
       console.log('Error en el inicio de sesión:', error);
-      this.setState({ error: 'Credenciales incorrectas' });
     });
 }
   render() {
@@ -131,6 +136,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     textAlign: 'center'
+  }, 
+  error: {
+    color: "red"
   }
 });
 
