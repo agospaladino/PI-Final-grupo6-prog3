@@ -7,8 +7,8 @@ export default function PostCard(props) {
   const { post, owner, showCommentButton, onComment, postId, likes, showLikes } = props;
 
   function likePost(postId, userLikes){
-    let userEmail = auth.currentUser.email;
-    let postL = db.collection("posts").doc(postId);
+    const userEmail = auth.currentUser.email;
+    const postL = db.collection("posts").doc(postId);
 
     if (userLikes.includes(userEmail)) {
       postL.update({

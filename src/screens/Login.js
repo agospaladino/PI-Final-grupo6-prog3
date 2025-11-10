@@ -8,30 +8,39 @@ export default class Login extends Component {
     this.state={
       email: '',
       password: '',
-      error: ""
+      error: []
     }
   }
 
   submit(email, password) {
     console.log('Usuario Logeado:', { email, password });
     const errorL = []
-    if(!email.includes('@')){
+    if(!email || email.length === 0){
+      errorL.push("El email es obligatorio")
+    } else if(!email.includes('@')){
       errorL.push("El email ingresado no es valido")
     }
-    if (!password || password.length < 5){
-      errorL.push('La contraseña es incorrecta');
+    else if(!email.includes('.com')){
+      errorL.push("El mail ingresado no es valido")
+    }
+    if (!password || password.length === 0){
+      errorL.push('La contraseña es obligatoria');
+    } else if(password.length < 5){
+      errorL.push('La contraseña debe tener al menos 5 caracteres');
     } 
     if(errorL.length > 0){
       this.setState({error: errorL})
+      return;
     }
     auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      this.setState({ error: '' });
+      this.setState({ error: [] });
       this.props.navigation.navigate('TabNavigator', { screen: 'Home' });
     })
     .catch((error) => {
       console.log('Error en el inicio de sesión:', error);
-    });
+      this.setState({ error: ['El email o la contraseña son incorrectos'] });
+    });
 }
   render() {
     return (

@@ -55,7 +55,7 @@ export default class Home extends Component {
           data={this.state.postsRecuperados}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            var autor = item.data.ownerName && item.data.ownerName !== ''
+            let autor = item.data.ownerName && item.data.ownerName !== ''
               ? item.data.ownerName
               : (item.data.owner || 'Usuario')
 
@@ -67,7 +67,16 @@ export default class Home extends Component {
                 likes={item.data.likes || []}
                 showLikes={true}
                 showCommentButton={true}
-                onComment={() => this.irAComentar(item)}
+                onComment={() => {
+                if (!auth.currentUser) {
+                  this.setState({ error: 'Debe estar logueado para comentar.' });
+                  this.props.navigation.navigate('Login');
+                } else {
+                  this.setState({ error: '' });
+                  this.props.navigation.navigate('ComentarPost', { postId: item.id, post: item.data });
+                }
+              }}
+
               />
             );
           }}
