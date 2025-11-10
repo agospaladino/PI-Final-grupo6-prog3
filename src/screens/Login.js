@@ -20,12 +20,12 @@ export default class Login extends Component {
     }    
      auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      // solo entra acá si las credenciales son correctas
+      
       alert('Inicio de sesión exitoso');
       this.props.navigation.navigate('TabNavigator', { screen: 'Home' });
     })
     .catch((error) => {
-      // si el email o la contraseña son incorrectos
+      
      console.log('Error en el inicio de sesión:', error);
       alert('Credenciales incorrectas');
     });

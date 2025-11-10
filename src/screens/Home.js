@@ -1,6 +1,7 @@
 import { Text, View, FlatList, Pressable, StyleSheet, Alert } from 'react-native'
 import React, { Component } from 'react'
 import { db, auth } from '../firebase/config'
+import Likea from '../components/Likea';
 
 export default class Home extends Component {
   constructor(props) {
@@ -49,18 +50,17 @@ export default class Home extends Component {
           renderItem={({ item }) => {
             var autor = item.data.ownerName && item.data.ownerName !== ''
               ? item.data.ownerName
-              : (item.data.owner || 'Usuario');
-
-            
-            var cantLikes = item.data.likes && item.data.likes.length
-              ? item.data.likes.length
-              : 0;
+              : (item.data.owner || 'Usuario')
 
             return (
               <View style={styles.postCard}>
                 <Text style={styles.postText}>{item.data.post || 'Sin contenido'}</Text>
                 <Text style={styles.ownerText}>{autor}</Text>
-                <Text style={styles.likesText}>{cantLikes} {cantLikes === 1 ? 'like' : 'likes'}</Text>
+               
+                <Likea
+                  postId={item.id}                              
+                  likes={item.data.likes ? item.data.likes : []} 
+                />
 
                 <Pressable
                   style={styles.commentButton}
@@ -102,11 +102,6 @@ const styles = StyleSheet.create({
     fontSize: 12, 
     color: 'gray', 
     marginBottom: 6 
-  },
-  likesText: { 
-    fontSize: 12, 
-    color: '#333', 
-    marginBottom: 8 
   },
   commentButton: {
     backgroundColor: '#007AFF', 
