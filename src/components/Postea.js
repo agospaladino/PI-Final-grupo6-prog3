@@ -97,10 +97,13 @@ const styles = StyleSheet.create(
         backgroundColor: "#ffffff",
         justifyContent: 'center',
         alignItems: 'center',
-        width: '20%',
         borderRadius: 5,
         alignSelf: 'center',
-        marginTop: 200
+        marginTop: 200,
+        width: '100%',        
+        maxWidth: 420,        
+        minWidth: 260,       
+        height: 48,  
 
     },
     titulo: {
@@ -108,13 +111,16 @@ const styles = StyleSheet.create(
         marginBottom: 10
     },
     cajaTexto: {
-        height: 120,
         borderWidth: 1,
         borderColor: "#ccc",
         borderRadius: 8,
         padding: 10,
         textAlignVertical: "top",
         marginBottom: 15,
+        width: '100%',        
+        maxWidth: 420,        
+        minWidth: 260,       
+        height: 48,  
 
 
     },
@@ -123,6 +129,10 @@ const styles = StyleSheet.create(
         paddingVertical: 10,
         borderRadius: 8,
         alignItems: "center",
+        width: '100%',        
+        maxWidth: 420,        
+        minWidth: 260,       
+        height: 48,  
 
     },
     botonTexto: {

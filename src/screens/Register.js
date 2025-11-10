@@ -9,17 +9,29 @@ export default class Register extends Component {
       username: '',
       password: '',
       email: '',
-      nombre: ''
+      nombre: '',
+      error: ''
         }
     }
     submit(nombre, email, password){
+      const errores = []
     console.log("creando usuario", {nombre, email, password})
-    if(
-      nombre.length > 3 &&
-      email.includes('@') &&
-      password.length > 5
-      
-    ) {
+    if(nombre.length <= 3){
+      errores.push("El nombre de usuario tiene que tener mas de tres caracteres")
+
+    }
+    if(!email.includes('@')){
+      errores.push("El mail ingresado no es valido")
+
+    }
+    if(password.length <= 5){
+      errores.push("La password tiene que tener mas de cinco caracteres")
+      return;
+    }
+
+    if(errores.length > 0){
+      this.setState({error: errores})
+    }
       auth.createUserWithEmailAndPassword(email, password)
       .then((user) => {
         return db.collection('users').add({
@@ -30,23 +42,12 @@ export default class Register extends Component {
       })
       .then(() => {
         console.log('Usuario guardado correctamente');
+        this.setState({ error: ''})
         this.props.navigation.navigate('Login');
       })
       .catch((error) => {
         console.log('Error al registrar:', error);
-        let mensajeError = 'Error al registrar usuario';
-        if (error.code === 'auth/email-already-in-use') {
-          mensajeError = 'El email ya está en uso';
-        } else if (error.code === 'auth/invalid-email') {
-          mensajeError = 'El email no es válido';
-        } else if (error.code === 'auth/weak-password') {
-          mensajeError = 'La contraseña es muy débil';
-        } else if (error.message) {
-          mensajeError = error.message;
-        }
-        alert(mensajeError);
       })
-  }
 }
 
   render() {
@@ -85,6 +86,12 @@ export default class Register extends Component {
             <Pressable onPress={() => this.props.navigation.navigate('Login')}>
               <Text style={styles.textlink}>Ya tengo cuenta</Text>
             </Pressable>
+            {this.state.error.length > 0 ?
+            (
+              this.state.error.map((error, i) => (
+                <Text key={i} style={styles.error}> {error} </Text>
+              ))
+            ) : null }
         </View>
     )
   }
@@ -104,15 +111,24 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '20%',
     marginBottom: 15,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
+    width: '100%',        
+    maxWidth: 420,        
+    minWidth: 260,       
+    height: 48,  
   },
   button: {
     backgroundColor: 'black',
+    width: '100%',      
+    maxWidth: 420,       
+    minWidth: 260,       
+    height: 48, 
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textoBoton: {
     color: 'white'
@@ -122,5 +138,9 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 15,
     marginTop: 10
+  },
+  error: {
+    color: 'red'
   }
+
 });

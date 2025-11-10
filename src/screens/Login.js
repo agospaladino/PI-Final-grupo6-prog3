@@ -33,7 +33,7 @@ export default class Login extends Component {
   render() {
     return (
         <View style={styles.container}>
-        <Text style = {styles.title}>Inciá sesión</Text>
+        <Text style = {styles.title}>Iniciá sesión</Text>
          <TextInput 
                 style={styles.input}
                     keyboardType='email-address'
