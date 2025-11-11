@@ -10,7 +10,7 @@ export default class Register extends Component {
       password: '',
       email: '',
       nombre: '',
-      error: ''
+      error: []
         }
     }
     submit(nombre, email, password){
@@ -18,19 +18,17 @@ export default class Register extends Component {
     console.log("creando usuario", {nombre, email, password})
     if(nombre.length <= 3){
       errores.push("El nombre de usuario tiene que tener mas de tres caracteres")
-
     }
     if(!email.includes('@')){
       errores.push("El mail ingresado no es valido")
-
     }
     if(password.length <= 5){
       errores.push("La password tiene que tener mas de cinco caracteres")
-      return;
     }
 
     if(errores.length > 0){
       this.setState({error: errores})
+      return;
     }
       auth.createUserWithEmailAndPassword(email, password)
       .then((user) => {
@@ -42,11 +40,12 @@ export default class Register extends Component {
       })
       .then(() => {
         console.log('Usuario guardado correctamente');
-        this.setState({ error: ''})
+        this.setState({ error: []})
         this.props.navigation.navigate('Login');
       })
       .catch((error) => {
         console.log('Error al registrar:', error);
+        this.setState({ error: ['Error al registrar el usuario'] });
       })
 }
 
@@ -57,21 +56,21 @@ export default class Register extends Component {
             <Text> Nombre de usuario: </Text>
             <TextInput 
                 keyboardType='default'
-                onChangeText={(text) => this.setState({nombre: text})}
+                onChangeText={(text) => this.setState({nombre: text, error: []})}
                 value={this.state.nombre}
                 style = {styles.input}
                 />
             <Text>Email: </Text>
             <TextInput 
                 keyboardType='email-address'
-                onChangeText={(text) => this.setState({email: text})}
+                onChangeText={(text) => this.setState({email: text, error: []})}
                 value={this.state.email}
                 style = {styles.input}
                 />
             <Text>Password: </Text>
             <TextInput 
                 keyboardType='default'
-                onChangeText={(text) => this.setState({password: text})}
+                onChangeText={(text) => this.setState({password: text, error: []})}
                 value={this.state.password}
                 secureTextEntry= {true}
                 style = {styles.input}

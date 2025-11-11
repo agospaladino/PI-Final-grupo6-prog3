@@ -5,10 +5,9 @@ import { db, auth } from '../firebase/config'
 export default class ComentarPost extends Component {
   constructor(props) {
     super(props);
-    const { postId, post } = this.props.route.params;
     this.state = {
-      postId: postId,
-      post: post,
+      postId: this.props.route.params.postId,
+      post: this.props.route.params.post,
       comentario: '',
       comentarios: [],
       loading: true,
@@ -81,7 +80,7 @@ export default class ComentarPost extends Component {
               <Text style={styles.noComentariosText}>No hay comentarios todavía</Text>
             ) : (
               <View>
-                {this.state.comentarios.map((comentario) => {
+                {this.state.comentarios.map((comentario, index) => {
                   return (
                     <View key={comentario.id} style={styles.comentarioCard}>
                       <Text style={styles.comentarioOwner}>{comentario.owner || 'Usuario'}</Text>

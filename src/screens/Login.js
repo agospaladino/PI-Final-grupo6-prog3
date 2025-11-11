@@ -39,8 +39,8 @@ export default class Login extends Component {
     })
     .catch((error) => {
       console.log('Error en el inicio de sesión:', error);
-      this.setState({ error: ['El email o la contraseña son incorrectos'] });
-    });
+      this.setState({ error: ['El email o la contraseña son incorrectos'] });
+    });
 }
   render() {
     return (
@@ -48,7 +48,9 @@ export default class Login extends Component {
         <Text style={styles.title}>Iniciá sesión</Text>
         {this.state.error.length > 0 ? (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{this.state.error}</Text>
+            {this.state.error.map((error, i) => (
+              <Text key={i} style={styles.errorText}>{error}</Text>
+            ))}
           </View>
         ) : null}
          <TextInput 

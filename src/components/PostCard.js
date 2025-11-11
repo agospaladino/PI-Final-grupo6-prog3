@@ -4,45 +4,49 @@ import {auth, db} from '../firebase/config'
 import firebase from "firebase"
 
 export default function PostCard(props) {
-  const { post, owner, showCommentButton, onComment, postId, likes, showLikes } = props;
-
-  function likePost(postId, userLikes){
-    const userEmail = auth.currentUser.email;
-    const postL = db.collection("posts").doc(postId);
-
-    if (userLikes.includes(userEmail)) {
-      postL.update({
-        likes: firebase.firestore.FieldValue.arrayRemove(userEmail),
-      });
-    } else {
-      postL.update({
-        likes: firebase.firestore.FieldValue.arrayUnion(userEmail),
-      });
-    }
-  }
+  let userEmail = auth.currentUser ? auth.currentUser.email : '';
+  let userLikes = props.likes || [];
+  let isLiked = userLikes.includes(userEmail);
+  let likeText = isLiked ? 'Quitar me gusta' : 'Me gusta';
 
   return (
     <View style={styles.postCard}>
-      <Text style={styles.postText}>{post || 'Sin contenido'}</Text>
-      <Text style={styles.ownerText}>{owner || 'Usuario'}</Text>
-      {showCommentButton && onComment && (
+      <Text style={styles.postText}>{props.post || 'Sin contenido'}</Text>
+      <Text style={styles.ownerText}>{props.owner || 'Usuario'}</Text>
+      {props.showCommentButton && props.onComment ? (
         <Pressable
           style={styles.commentButton}
-          onPress={() => onComment()}
+          onPress={() => props.onComment()}
         >
           <Text style={styles.commentButtonText}>Comentar</Text>
         </Pressable>
-      )}
-      <Pressable
-        onPress={() => likePost(postId, likes || [])}
-        style={styles.likeButton}>
-       <View style={styles.likeRow}>
-       <Text style={styles.likeText}>Me gusta</Text>
-        <Text style={styles.likeCount}>
-          {(likes && likes.length) ? likes.length : 0}
-        </Text>
-       </View>
-      </Pressable>
+      ) : null}
+      {props.showLikes ? (
+        <Pressable
+          onPress={() => {
+            let userEmail = auth.currentUser.email;
+            let postL = db.collection("posts").doc(props.postId);
+            let userLikes = props.likes || [];
+
+            if (userLikes.includes(userEmail)) {
+              postL.update({
+                likes: firebase.firestore.FieldValue.arrayRemove(userEmail),
+              });
+            } else {
+              postL.update({
+                likes: firebase.firestore.FieldValue.arrayUnion(userEmail),
+              });
+            }
+          }}
+          style={styles.likeButton}>
+         <View style={styles.likeRow}>
+         <Text style={styles.likeText}>{likeText}</Text>
+          <Text style={styles.likeCount}>
+            {(props.likes && props.likes.length) ? props.likes.length : 0}
+          </Text>
+         </View>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

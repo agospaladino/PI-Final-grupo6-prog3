@@ -6,7 +6,6 @@ import { auth } from '../firebase/config';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
 import TabNavigator from './TabNavigator';
-import ComentarPost from '../screens/ComentarPost';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +41,6 @@ export default class StackNavigator extends Component {
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name='Register' component={Register} options={{headerShown: false}}/>
         <Stack.Screen name='TabNavigator' component={TabNavigator} options={{headerShown: false}}/>
-        <Stack.Screen name='ComentarPost' component={ComentarPost} options={{headerShown: false}}/>
       </Stack.Navigator>
     );
   }

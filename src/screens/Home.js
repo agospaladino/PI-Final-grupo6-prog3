@@ -33,16 +33,6 @@ export default class Home extends Component {
     if (this.unsubscribe) { this.unsubscribe(); }
   }
 
-  irAComentar(item) {
-    if (!auth.currentUser) {
-      this.setState({ error: 'Tenés que estar logueada para comentar.' });
-      this.props.navigation.navigate('Login');
-      return;
-    }
-    this.setState({ error: '' });
-    this.props.navigation.navigate('ComentarPost', { postId: item.id, post: item.data });
-  }
-
   render() {
     return (
       <View style={styles.container}>
@@ -54,7 +44,8 @@ export default class Home extends Component {
         <FlatList
           data={this.state.postsRecuperados}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
+          renderItem={(itemData) => {
+            let item = itemData.item;
             let autor = item.data.ownerName && item.data.ownerName !== ''
               ? item.data.ownerName
               : (item.data.owner || 'Usuario')

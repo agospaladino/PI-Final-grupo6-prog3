@@ -72,8 +72,7 @@ export default class MiPerfil extends Component {
           docs.docs.forEach((doc) => {
             posts.push({
               id: doc.id,
-              text: doc.data().post || doc.data().text || doc.data().content || '',
-              createdAt: doc.data().createdAt || 0
+              data: doc.data()
             });
           });
           this.setState({ posts });
@@ -130,14 +129,32 @@ export default class MiPerfil extends Component {
           ) : (
             <FlatList
               data={this.state.posts}
-              renderItem={({ item }) => (
-                <PostCard
-                  post={item.text}
-                  owner={this.state.username + ' posteó'}
-                  showLikes={false}
-                  showCommentButton={false}
-                />
-              )}
+              renderItem={(itemData) => {
+                let item = itemData.item;
+                let autor = item.data.ownerName && item.data.ownerName !== ''
+                  ? item.data.ownerName
+                  : (item.data.owner || this.state.username || 'Usuario')
+
+                return (
+                  <PostCard
+                    post={item.data.post}
+                    owner={autor}
+                    postId={item.id}
+                    likes={item.data.likes || []}
+                    showLikes={true}
+                    showCommentButton={true}
+                    onComment={() => {
+                      if (!auth.currentUser) {
+                        this.setState({ error: 'Debe estar logueado para comentar.' });
+                        this.props.navigation.navigate('Login');
+                      } else {
+                        this.setState({ error: '' });
+                        this.props.navigation.navigate('ComentarPost', { postId: item.id, post: item.data });
+                      }
+                    }}
+                  />
+                );
+              }}
               keyExtractor={(item) => item.id}
             />
           )}
@@ -200,6 +217,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    flex: 1,
+    maxHeight: 400,
   },
   noPosts: {
     fontSize: 14,
