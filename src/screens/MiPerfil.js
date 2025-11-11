@@ -149,7 +149,10 @@ export default class MiPerfil extends Component {
                         this.props.navigation.navigate('Login');
                       } else {
                         this.setState({ error: '' });
-                        this.props.navigation.navigate('ComentarPost', { postId: item.id, post: item.data });
+                        this.props.navigation.navigate('Home', { 
+                          screen: 'ComentarPost',
+                          params: { postId: item.id, post: item.data }
+                        });
                       }
                     }}
                   />
